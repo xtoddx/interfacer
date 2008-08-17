@@ -28,3 +28,8 @@ Rake::TestTask.new do |t|
   t.verbose = true
 end
 
+desc 'Run Heckle'
+task :heckle do |t|
+  # dont use call node as a check, it will loop forever (even -T doesnt save)
+  sh 'heckle Interfacer -t test/interfacer.rb -n cvasgn,dasgn,dasgn_curr,false,gasgn,iasgn,if,lasgn,lit,str,true,until,while'
+end
