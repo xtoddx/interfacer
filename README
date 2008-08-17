@@ -1,0 +1,39 @@
+= Interfacer
+
+Interfacer should be mixed into objects that need to behave in a few
+differnt ways based on what it is interacting with.
+
+=== Example
+
+class ITest
+ include Interfacer
+
+ with_interface(:foo) do
+   def my_method
+     "called for foo"
+   end
+ end
+
+ def my_method
+   "called globally"
+ end
+end
+
+i = ITest.new
+i.my_method                #=> "called globally"
+i.with_interface(:foo) do
+ i.my_method              #=> "called for foo"
+end
+i.my_method                #=> "called globally"
+
+=== Why
+
+If you have a class that does an expensive data load or computation, and
+it should publish to many consumers with different formats, you could have
+a method `export` that is by default CSV, but could have interface overrides
+for YAML, Marshal, ActiveRecord, &c., for example.
+
+=== Testing
+
+Make sure you have the gem test/spec installed and
+$ ruby test/interfacer.rb
