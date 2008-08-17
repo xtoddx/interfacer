@@ -58,7 +58,7 @@ module Interfacer
     slapclass = (class << self ; self ; end)
     method_list.select{|x| respond_to?(x)}.each do |x|
       if_meth = "interfacer:#{x}"
-      if methods.include?(if_meth)
+      if respond_to?(if_meth)
         raise "Don't use interface inside an interface"
       end
       slapclass.send :alias_method, if_meth, x
@@ -83,6 +83,7 @@ module Interfacer
     methods.each do |meth|
       slapclass.send :remove_method, meth
       slapclass.send :alias_method, meth, "interfacer:#{meth}"
+      slapclass.send :undef_method, "interfacer:#{meth}"
     end
   end
 

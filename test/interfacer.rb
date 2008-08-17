@@ -67,4 +67,47 @@ describe 'A class with an interface that defines a method already in the class' 
       assert_equal 'baz', inst.bar
     end
   end
+
+  it 'should interface => global => interface again cleanly' do
+    inst = ITest.new
+    inst.with_interface(:foo) {}
+    inst.with_interface(:foo) do
+      assert_equal 'baz', inst.bar
+    end
+  end
+
+end
+
+describe 'A Class with multiple interfaces' do
+  setup do
+    class ITest
+      include Interfacer
+
+      with_interface(:foo) do
+        def bar ; 'bar_foo' ; end
+      end
+
+      with_interface(:baz) do
+        def bar ; 'bar_baz' ; end
+      end
+    end
+  end
+
+  it 'should change at between interfaces cleanly' do
+    i = ITest.new
+    i.with_interface(:foo) {}
+    i.with_interface(:baz) do
+      assert_equal 'bar_baz', i.bar
+    end
+  end
+
+  # So people don't lose their scope and mangle methods
+  it 'should not allow activating an interface within an interface' do
+    i = ITest.new
+    i.with_interface(:foo) do
+      assert_raise(RuntimeError) do
+        i.with_interface(:baz) {}
+      end
+    end
+  end
 end
